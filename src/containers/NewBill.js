@@ -18,27 +18,36 @@ export default class NewBill {
   handleChangeFile = e => {
     e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
+    const errorMessage = this.document.getElementById('file-error-message')
+    const submitbtn = this.document.getElementById('btn-send-bill')
+    if(file.name.includes('.jpg') || file.name.includes('.jpeg') || file.name.includes('.png')) {
+      const filePath = e.target.value.split(/\\/g)
+      const fileName = filePath[filePath.length-1]
+      const formData = new FormData()
+      const email = JSON.parse(localStorage.getItem("user")).email
+      errorMessage.classList.add('hidden')
+      submitbtn.removeAttribute('disabled')
+      formData.append('file', file)
+      formData.append('email', email)
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+        }).catch(error => console.error(error))
+    } else {
+      errorMessage.classList.remove('hidden')
+      submitbtn.setAttribute('disabled', '')
+    }
+    
   }
   handleSubmit = e => {
     e.preventDefault()
