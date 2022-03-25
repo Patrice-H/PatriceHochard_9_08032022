@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 
-import {screen, waitFor} from "@testing-library/dom"
+import {screen, waitFor, fireEvent} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
+import Bills from "../containers/Bills.js"
 import { bills } from "../fixtures/bills.js"
-import { ROUTES_PATH} from "../constants/routes.js";
+import { ROUTES_PATH, ROUTES} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 
 import router from "../app/Router.js";
@@ -34,6 +35,49 @@ describe("Given I am connected as an employee", () => {
       const antiChrono = (a, b) => ((a < b) ? 1 : -1)
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
+    })
+  })
+
+  describe("When I am on Bills Page and I click on the New Bill button", () => {
+    test("Then, it should render NewBill page", () => {
+
+      // Init localStorage
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }))
+
+      // Init onNavigate and store
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      const store = null
+
+      // Build user interface
+      document.body.innerHTML = BillsUI({ data: bills });
+      
+      // Init bills
+      const allBills = new Bills({
+        document,
+        onNavigate,
+        store,
+        localStorage: window.localStorage,
+      });
+
+      // Mock handleClickNewBill function
+      const handleClickNewBill = jest.fn(allBills.handleClickNewBill);
+
+      // Get DOM element
+      const billBtn = screen.getByTestId('btn-new-bill');
+
+      // Add event and fire
+      billBtn.addEventListener('click', handleClickNewBill);
+      fireEvent.click(billBtn);
+
+      // handleClickNewBill function must be called
+      expect(handleClickNewBill).toBeCalled();
+      // screen should show "Envoyer une note de frais"
+      expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy();
     })
   })
 })
