@@ -80,4 +80,53 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy();
     })
   })
-})
+
+  describe("When I am on Bills Page and I click on the icon eye", () => {
+    test("Then the modal should open up", () => {
+
+      // Init localStorage
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }));
+
+      // Init onNavigate and store
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+      const store = null;
+      
+      // Build user interface
+      document.body.innerHTML = BillsUI({ data: bills });
+      
+      // Init bills
+      const allBills = new Bills({
+        document,
+        onNavigate,
+        store,
+        localStorage: window.localStorage,
+      });
+      
+      // Get DOM eye button element
+      const eye = screen.getAllByTestId('icon-eye')[0];
+
+      // Mock modal comportment
+      $.fn.modal = jest.fn();
+
+      // Mock handleClickIconEye function
+      const handleClickIconEye = jest.fn(allBills.handleClickIconEye);
+
+      // Add event and fire
+      eye.addEventListener('click', handleClickIconEye(eye));
+      fireEvent.click(eye);
+
+      // Get DOM modal element
+      const modale = screen.getByText('Justificatif');
+
+      // handleClickIconEye function must be called
+      expect(handleClickIconEye).toHaveBeenCalled();
+      // The modal should open up
+      expect(modale).toBeTruthy();
+    });
+  });
+});
