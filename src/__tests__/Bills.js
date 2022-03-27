@@ -133,7 +133,7 @@ describe("Given I am connected as an employee", () => {
   // getBills function integration tests
   describe("When I navigate to bills page", () => {
     test("fetches bills from mock API GET", async () => {
-      const spy = jest.spyOn(mockStore, "bills")
+      const spy = jest.spyOn(mockStore, "bills");
       const bills = await mockStore.bills().list();
 
       localStorage.setItem('user', JSON.stringify({ type: 'Employee', email: 'e@e' }));
