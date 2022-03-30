@@ -5,9 +5,10 @@
 import { fireEvent, screen } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
-import { ROUTES } from '../constants/routes';
+import { ROUTES, ROUTES_PATH } from '../constants/routes';
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store"
+import router from "../app/Router.js";
 
 // Mock - parameters for bdd
 jest.mock("../app/store", () => mockStore);
@@ -160,6 +161,74 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       expect(errorMessage.classList.contains('hidden')).toBe(false);
       // Submit button is disabled
       expect(submitbtn.hasAttribute('disabled')).toBe(true);
+    });
+  });
+
+  /* POST new bill integration test */
+
+  describe("When I submit a complete form", () => {
+    test("Then I should go on Bills page", () => {
+
+      // Build user interface
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+
+      // Init a new bill
+      const newbill = new NewBill({document, onNavigate, store, localStorage});
+      
+      // Mock handleSubmit function
+      const handleSubmit = jest.fn(() => newbill.handleSubmit);
+
+      // Mock handleChangeFile function
+      const handleChangeFile = jest.fn(() => newbill.handleChangeFile);
+
+      // Get DOM elements
+      const form = screen.getByTestId('form-new-bill');
+      
+      const expenseType = screen.getByTestId('expense-type');
+      const expenseName = screen.getByTestId('expense-name');
+      const datePicker = screen.getByTestId('datepicker');
+      const amount = screen.getByTestId('amount');
+      const vat = screen.getByTestId('vat');
+      const pct = screen.getByTestId('pct');
+      const commentary = screen.getByTestId('commentary');
+      const inputFileUser = screen.getByTestId('file');
+
+      // Define new bill's data
+      const newbilldata = {
+        'type': 'Restaurants et bars',
+        'name': 'Restaurant du lac',
+        'date': '2002-02-02',
+        'amount': 100,
+        'vat': 20,
+        'pct': 20,
+        'commentary': 'test',
+        'fileName': 'test_file.jpeg'
+      };
+
+      // Event and fire
+      fireEvent.change(expenseType, {target: {value: newbilldata.type}})
+      fireEvent.change(expenseName, {target: {value: newbilldata.name}})
+      fireEvent.change(datePicker, {target: {value: newbilldata.date}})
+      fireEvent.change(amount, {target: {value: newbilldata.amount}})
+      fireEvent.change(vat, {target: {value: newbilldata.vat}})
+      fireEvent.change(pct, {target: {value: newbilldata.pct}})
+      fireEvent.change(commentary, {target: {value: newbilldata.commentary}})
+
+      inputFileUser.addEventListener('change', handleChangeFile);
+      fireEvent.change(inputFileUser, {
+        target: {
+          files: [new File(['test_file.jpeg'], 'test_file.jpeg')],
+        },
+      });
+
+      form.addEventListener('submit', handleSubmit);
+      fireEvent.submit(form);
+
+      // handleSubmit function must have been called
+      expect(handleSubmit).toHaveBeenCalled();
+      // I should go on Bills page
+      expect(screen.getByText('Mes notes de frais')).toBeTruthy();
     });
   });
 });
