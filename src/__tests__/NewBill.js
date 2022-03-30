@@ -243,6 +243,9 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       const html = NewBillUI();
       document.body.innerHTML = html;
     });
+    afterEach(() => {
+      console.error.mockClear();
+    });
     test("fetches bills from an API and fails with 404 message error", async () => {
       
       mockStore.bills.mockImplementationOnce(() => {
@@ -273,6 +276,37 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       expect(console.error).toHaveBeenCalled();
       // Console error should contain error 404 message
       expect(console.error.mock.calls[0][0].toString()).toContain('Erreur 404');
+    });
+    test("fetches bills from an API and fails with 500 message error", async () => {
+      
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          update : () =>  {
+            return Promise.reject(new Error("Erreur 500"));
+          }
+        }
+      });
+      
+      // Init a new bill
+      const newbill = new NewBill({document, onNavigate, store, localStorage});
+      
+      // Mock handleSubmit function
+      const handleSubmit = jest.fn(() => newbill.handleSubmit);
+
+      // Get DOM elements
+      const form = screen.getByTestId('form-new-bill');
+
+      // Event and fire
+      form.addEventListener('submit', handleSubmit);
+      fireEvent.submit(form);
+
+      // NodeJS process (Event Loop queue)
+      await new Promise(process.nextTick);
+
+      // Console error should have been called
+      expect(console.error).toHaveBeenCalled();
+      // Console error should contain error 500 message
+      expect(console.error.mock.calls[0][0].toString()).toContain('Erreur 500');
     });
   });
 });
