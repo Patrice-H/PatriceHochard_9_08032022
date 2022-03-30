@@ -2,16 +2,15 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, screen } from "@testing-library/dom"
-import NewBillUI from "../views/NewBillUI.js"
-import NewBill from "../containers/NewBill.js"
-import { ROUTES, ROUTES_PATH } from '../constants/routes';
-import { localStorageMock } from "../__mocks__/localStorage.js";
-import mockStore from "../__mocks__/store"
-import router from "../app/Router.js";
+import { fireEvent, screen } from '@testing-library/dom';
+import NewBillUI from '../views/NewBillUI.js';
+import NewBill from '../containers/NewBill.js';
+import { ROUTES } from '../constants/routes';
+import { localStorageMock } from '../__mocks__/localStorage.js';
+import mockStore from '../__mocks__/store';
 
 // Mock - parameters for bdd
-jest.mock("../app/store", () => mockStore);
+jest.mock('../app/store', () => mockStore);
 
 // Init localStorage
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
@@ -21,14 +20,14 @@ window.localStorage.setItem('user', JSON.stringify({
 
 // Init onNavigate and store
 const onNavigate = (pathname) => {
-  document.body.innerHTML = ROUTES({ pathname })
+  document.body.innerHTML = ROUTES({ pathname });
 };
 const store = mockStore;
 
-describe("Given I am connected as an employee and I am on NewBill Page", () => {
+describe('Given I am connected as an employee and I am on NewBill Page', () => {
 
-  describe("When I upload a .jpg file", () => {
-    test("Then I can submit form and have not error message", () => {
+  describe('When I upload a .jpg file', () => {
+    test('Then I can submit form and have not error message', () => {
       // Build user interface
       const html = NewBillUI();
       document.body.innerHTML = html;
@@ -40,7 +39,7 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       const handleChangeFile = jest.fn(() => newbill.handleChangeFile);
 
       // Get DOM elements
-      const inputFileUser = screen.getByTestId("file");
+      const inputFileUser = screen.getByTestId('file');
       const submitbtn = document.getElementById('btn-send-bill');
       const errorMessage = screen.getByText('Format de fichier invalide');
 
@@ -61,8 +60,8 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
     });
   });
 
-  describe("When I upload a .jpeg file", () => {
-    test("Then I can submit form and have not error message", () => {
+  describe('When I upload a .jpeg file', () => {
+    test('Then I can submit form and have not error message', () => {
       // Build user interface
       const html = NewBillUI();
       document.body.innerHTML = html;
@@ -74,7 +73,7 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       const handleChangeFile = jest.fn(() => newbill.handleChangeFile);
 
       // Get DOM elements
-      const inputFileUser = screen.getByTestId("file");
+      const inputFileUser = screen.getByTestId('file');
       const submitbtn = document.getElementById('btn-send-bill');
       const errorMessage = screen.getByText('Format de fichier invalide');
 
@@ -95,8 +94,8 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
     });
   });
 
-  describe("When I upload a .png file", () => {
-    test("Then I can submit form and have not error message", () => {
+  describe('When I upload a .png file', () => {
+    test('Then I can submit form and have not error message', () => {
       // Build user interface
       const html = NewBillUI();
       document.body.innerHTML = html;
@@ -108,7 +107,7 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       const handleChangeFile = jest.fn(() => newbill.handleChangeFile);
 
       // Get DOM elements
-      const inputFileUser = screen.getByTestId("file");
+      const inputFileUser = screen.getByTestId('file');
       const submitbtn = document.getElementById('btn-send-bill');
       const errorMessage = screen.getByText('Format de fichier invalide');
 
@@ -129,8 +128,8 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
     });
   });
 
-  describe("When I upload a file with an extension other than .jpg, .jpeg or .png", () => {
-    test("Then I cannot submit form and have an error message about file uploaded", () => {
+  describe('When I upload a file with an extension other than .jpg, .jpeg or .png', () => {
+    test('Then I cannot submit form and have an error message about file uploaded', () => {
 
       // Build user interface
       const html = NewBillUI();
@@ -143,7 +142,7 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       const handleChangeFile = jest.fn(() => newbill.handleChangeFile);
 
       // Get DOM elements
-      const inputFileUser = screen.getByTestId("file");
+      const inputFileUser = screen.getByTestId('file');
       const submitbtn = document.getElementById('btn-send-bill');
       const errorMessage = screen.getByText('Format de fichier invalide');
 
@@ -166,8 +165,8 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
 
   /* POST new bill integration test */
 
-  describe("When I submit a complete form", () => {
-    test("Then I should go on Bills page", () => {
+  describe('When I submit a complete form', () => {
+    test('Then I should go on Bills page', () => {
 
       // Build user interface
       const html = NewBillUI();
@@ -207,13 +206,13 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       };
 
       // Event and fire
-      fireEvent.change(expenseType, {target: {value: newbilldata.type}})
-      fireEvent.change(expenseName, {target: {value: newbilldata.name}})
-      fireEvent.change(datePicker, {target: {value: newbilldata.date}})
-      fireEvent.change(amount, {target: {value: newbilldata.amount}})
-      fireEvent.change(vat, {target: {value: newbilldata.vat}})
-      fireEvent.change(pct, {target: {value: newbilldata.pct}})
-      fireEvent.change(commentary, {target: {value: newbilldata.commentary}})
+      fireEvent.change(expenseType, {target: {value: newbilldata.type}});
+      fireEvent.change(expenseName, {target: {value: newbilldata.name}});
+      fireEvent.change(datePicker, {target: {value: newbilldata.date}});
+      fireEvent.change(amount, {target: {value: newbilldata.amount}});
+      fireEvent.change(vat, {target: {value: newbilldata.vat}});
+      fireEvent.change(pct, {target: {value: newbilldata.pct}});
+      fireEvent.change(commentary, {target: {value: newbilldata.commentary}});
 
       inputFileUser.addEventListener('change', handleChangeFile);
       fireEvent.change(inputFileUser, {
@@ -232,9 +231,9 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
     });
   });
 
-  describe("When an error occurs on API", () => {
+  describe('When an error occurs on API', () => {
     beforeEach(() => {
-      jest.spyOn(mockStore, "bills");
+      jest.spyOn(mockStore, 'bills');
 
       // Spy and mock console error
       jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -246,12 +245,12 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
     afterEach(() => {
       console.error.mockClear();
     });
-    test("fetches bills from an API and fails with 404 message error", async () => {
+    test('fetches bills from an API and fails with 404 message error', async () => {
       
       mockStore.bills.mockImplementationOnce(() => {
         return {
           update : () =>  {
-            return Promise.reject(new Error("Erreur 404"));
+            return Promise.reject(new Error('Erreur 404'));
           }
         }
       });
@@ -277,12 +276,12 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       // Console error should contain error 404 message
       expect(console.error.mock.calls[0][0].toString()).toContain('Erreur 404');
     });
-    test("fetches bills from an API and fails with 500 message error", async () => {
+    test('fetches bills from an API and fails with 500 message error', async () => {
       
       mockStore.bills.mockImplementationOnce(() => {
         return {
           update : () =>  {
-            return Promise.reject(new Error("Erreur 500"));
+            return Promise.reject(new Error('Erreur 500'));
           }
         }
       });
