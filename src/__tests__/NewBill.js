@@ -8,7 +8,7 @@ import NewBill from '../containers/NewBill.js';
 import { ROUTES } from '../constants/routes';
 import { localStorageMock } from '../__mocks__/localStorage.js';
 import mockStore from '../__mocks__/store';
-
+import userEvent  from '@testing-library/user-event';
 // Mock - parameters for bdd
 jest.mock('../app/store', () => mockStore);
 
@@ -160,6 +160,40 @@ describe('Given I am connected as an employee and I am on NewBill Page', () => {
       expect(errorMessage.classList.contains('hidden')).toBe(false);
       // Submit button is disabled
       expect(submitbtn.hasAttribute('disabled')).toBe(true);
+    });
+  });
+
+  describe('When I submit a incomplete form', () => {
+    test('Then I should stay on NewBill page', () => {
+
+      // Build user interface
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+      
+      // Mock handleSubmit function
+      const handleSubmit = jest.fn((e)=> e.preventDefault());
+
+      // Get DOM elements
+      const submitbtn = document.getElementById('btn-send-bill');
+      const datePicker = screen.getByTestId('datepicker');
+      const amount = screen.getByTestId('amount');
+      const vat = screen.getByTestId('vat');
+      const pct = screen.getByTestId('pct');
+      const inputFileUser = screen.getByTestId('file');
+
+      submitbtn.addEventListener('click', handleSubmit);
+      userEvent.click(submitbtn);
+
+      // input fields required are empty
+      expect(datePicker.value).toBe('');
+      expect(amount.value).toBe('');
+      expect(vat.value).toBe('');
+      expect(pct.value).toBe('');
+      expect(inputFileUser.files[0]).toBe(undefined);
+      // handleSubmit function must have been called
+      expect(handleSubmit).toHaveBeenCalled();
+      // I should stay on NewBill page
+      expect(screen.getByText('Envoyer une note de frais')).toBeTruthy();
     });
   });
 
