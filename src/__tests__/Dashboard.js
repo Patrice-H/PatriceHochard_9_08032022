@@ -91,6 +91,58 @@ describe('Given I am connected as an Admin', () => {
     })
   })
 
+  describe('When I am on Dashboard page and I click 2 times on arrow', () => {
+    test('Then, tickets list should be unfolding, and cards should not appear', async () => {
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Admin'
+      }))
+
+      const dashboard = new Dashboard({
+        document, onNavigate, store: null, bills:bills, localStorage: window.localStorage
+      })
+      document.body.innerHTML = DashboardUI({ data: { bills } })
+
+      const handleShowTickets1 = jest.fn((e) => dashboard.handleShowTickets(e, bills, 1))
+      const handleShowTickets2 = jest.fn((e) => dashboard.handleShowTickets(e, bills, 2))
+      const handleShowTickets3 = jest.fn((e) => dashboard.handleShowTickets(e, bills, 3))
+
+      const icon1 = screen.getByTestId('arrow-icon1')
+      const icon2 = screen.getByTestId('arrow-icon2')
+      const icon3 = screen.getByTestId('arrow-icon3')
+
+      const container1 = document.getElementById('status-bills-container1')
+      const container2 = document.getElementById('status-bills-container2')
+      const container3 = document.getElementById('status-bills-container3')
+
+      icon1.addEventListener('click', handleShowTickets1)
+      userEvent.click(icon1)
+      userEvent.click(icon1)
+      expect(handleShowTickets1).toHaveBeenCalledTimes(2)
+      expect(container1.hasChildNodes()).toBe(false)
+      expect(icon1.style.transform).toBe('rotate(90deg)')
+
+      icon2.addEventListener('click', handleShowTickets2)
+      userEvent.click(icon2)
+      userEvent.click(icon2)
+      expect(handleShowTickets2).toHaveBeenCalledTimes(2)
+      expect(container2.hasChildNodes()).toBe(false)
+      expect(icon2.style.transform).toBe('rotate(90deg)')
+
+      icon3.addEventListener('click', handleShowTickets3)
+      userEvent.click(icon3)
+      userEvent.click(icon3)
+      expect(handleShowTickets3).toHaveBeenCalledTimes(2)
+      expect(container3.hasChildNodes()).toBe(false)
+      expect(icon3.style.transform).toBe('rotate(90deg)')
+    })
+  })
+
   describe('When I am on Dashboard page and I click on edit icon of a card', () => {
     test('Then, right form should be filled',  () => {
 
