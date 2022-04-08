@@ -26,6 +26,7 @@ const store = mockStore;
 
 describe('Given I am connected as an employee and I am on NewBill Page', () => {
 
+  // handleChangeFile function unit tests
   describe('When I upload a .jpg file', () => {
     test('Then I can submit form and have not error message', () => {
       // Build user interface
@@ -163,6 +164,7 @@ describe('Given I am connected as an employee and I am on NewBill Page', () => {
     });
   });
 
+  // handleSubmit function unit test
   describe('When I submit a incomplete form', () => {
     test('Then I should stay on NewBill page', () => {
 

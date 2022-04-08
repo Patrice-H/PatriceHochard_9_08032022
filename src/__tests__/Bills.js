@@ -14,6 +14,8 @@ import router from "../app/Router.js";
 jest.mock("../app/store", () => mockStore);
 
 describe("Given I am connected as an employee", () => {
+
+  /* BillsUI tests suite */
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
@@ -39,6 +41,8 @@ describe("Given I am connected as an employee", () => {
     });
   });
 
+  /* Bills tests suite */
+  // handleClickNewBill function unit test
   describe("When I am on Bills Page and I click on the New Bill button", () => {
     test("Then, it should render NewBill page", () => {
       // Init localStorage
@@ -81,6 +85,7 @@ describe("Given I am connected as an employee", () => {
     });
   });
 
+  // handleClickIconEye function unit test
   describe("When I am on Bills Page and I click on the icon eye", () => {
     test("Then the modal should open up", () => {
 
